@@ -111,11 +111,25 @@ public class UserAssetsService {
         return userAssetsRepository.existsByUserIdAndAssetId(userId, assetId);
     }
 
-    public ResponseEntity<UserAssets> processGetRequestById(Long requestId) {
+    public AssetResponseDTO mapToDTO(UserAssets userAssets) {
+        AssetResponseDTO dto = new AssetResponseDTO();
+        dto.setId(userAssets.getId());
+        dto.setStatus(userAssets.getStatus()); // Assuming Status is an Enum
+        dto.setName(userAssets.getAsset().getName());
+        dto.setDescription(userAssets.getAsset().getDescription());
+        dto.setUserId(userAssets.getUser().getId());
+        dto.setUserName(userAssets.getUser().getUsername());
+
+        return dto;
+    }
+
+
+    public ResponseEntity<AssetResponseDTO> processGetRequestById(Long requestId) {
         UserAssets request = getRequestById(requestId);
 
         if (request != null) {
-            return ResponseEntity.ok(request);
+            AssetResponseDTO responseDTO = mapToDTO(request);
+            return ResponseEntity.ok(responseDTO);
         } else {
             return ResponseEntity.notFound().build();
         }
@@ -148,7 +162,7 @@ public class UserAssetsService {
                 user.getId(),
                 user.getUsername(),
                 user.getPassword(),
-                user.getUser_type(),
+                user.getUserType(),
                 user.getEmail(),
                 user.getPhone(),
                 user.getFname(),
@@ -167,8 +181,6 @@ public class UserAssetsService {
             List<UserAssets> userAssetsList = userAssetsRepository.findAllByUserId(userId);
 
             Map<Long, UserAssetsResponseDTO> userAssetsMap = new HashMap<>();
-            System.out.println(userAssetsList);
-
             for (UserAssets userAsset : userAssetsList) {
                 UserAssetsResponseDTO responseDTO = userAssetsMap.get(userAsset.getId());
 

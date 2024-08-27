@@ -8,6 +8,7 @@ import com.example.assetmanagementsystem.response.RequestResponse;
 import com.example.assetmanagementsystem.services.AssetsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 public class AssetsController {
     private final AssetsService assetsService;
 
+    @PreAuthorize("@customSecurityExpressions.isAdmin()")
     @GetMapping("/assets")
     ResponseEntity<Iterable<AssetsDto>> getAssets(
             @RequestParam(value = "keyword", required = false) String keyword,
@@ -25,16 +27,19 @@ public class AssetsController {
         return assetsService.fetchAssets(keyword, page, size);
     }
 
+    @PreAuthorize("@customSecurityExpressions.isAdmin()")
     @PostMapping("/assets")
     public ResponseEntity<RequestResponse> saveAssets(@RequestBody AssetPostRequest asset, @RequestHeader("Authorization") String token) {
         return assetsService.processAssetSaving(asset, token);
     }
 
+    @PreAuthorize("@customSecurityExpressions.isAdmin()")
     @PutMapping("/assets/{id}")
     public ResponseEntity<RequestResponse> updateAsset(@PathVariable Long id, @RequestBody Assets asset, @RequestHeader("Authorization") String token) {
         return assetsService.processAssetUpdate(id, asset, token);
     }
 
+    @PreAuthorize("@customSecurityExpressions.isAdmin()")
     @DeleteMapping("/assets/{id}")
     public ResponseEntity<RequestResponse> deleteAsset(@PathVariable Long id) {
         return assetsService.processAssetDeletion(id);

@@ -9,6 +9,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
@@ -26,7 +27,9 @@ public class Users implements UserDetails {
     private Long id;
     private String username;
     private String password;
-    private String user_type;
+    @Getter
+    @Column(name = "user_type", nullable = false)
+    private String userType; // Use the correct field name
     private String email;
     private String phone;
     private String fname;
@@ -44,6 +47,12 @@ public class Users implements UserDetails {
     private List<UserAssets> userAssets;
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        if ("ADMIN".equals(userType)) {
+            return Collections.singletonList(new SimpleGrantedAuthority("ROLE_ADMIN"));
+        } else if ("EMPLOYEE".equals(userType)) {
+            return Collections.singletonList(new SimpleGrantedAuthority("ROLE_EMPLOYEE"));
+        }
         return Collections.emptyList(); // or return a list of roles/authorities
     }
+
 }

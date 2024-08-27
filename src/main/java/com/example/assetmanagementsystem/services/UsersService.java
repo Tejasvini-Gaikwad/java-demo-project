@@ -91,7 +91,7 @@ public class UsersService {
                 user.getId(),
                 user.getUsername(),
                 user.getPassword(),
-                user.getUser_type(),
+                user.getUserType(),
                 user.getEmail(),
                 user.getPhone(),
                 user.getFname(),
@@ -136,25 +136,27 @@ public class UsersService {
         userValidator.validateUserRequest(user, "CREATE");
         Users newUser = new Users();
         newUser.setUsername(user.getUsername());
-//        newUser.setPassword(user.getPassword());
         newUser.setPassword(passwordEncoder.encode(user.getPassword()));
         newUser.setEmail(user.getEmail());
         newUser.setFname(user.getFname());
         newUser.setLname(user.getLname());
-        newUser.setUser_type(user.getUser_type());
+        newUser.setUserType(user.getUser_type());
         newUser.setCreated_by(userId);
         newUser.setUpdated_by(userId);
         newUser.setCreated_at(new Date());
         newUser.setUpdated_at(new Date());
         newUser.setPhone(user.getPhone());
-        Users savedUser = saveUser(newUser);
+        Users savedUser = saveUser(newUser, "CREATE", user.getPassword());
         RequestResponse response = new RequestResponse("User saved successfully.", HttpStatus.OK.value());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 
-    public Users saveUser(Users user) {
-        sendUserOnboardingEmail(user, user.getPassword());
+    public Users saveUser(Users user, String method, String password) {
+        if(method.equals("CREATE")){
+            sendUserOnboardingEmail(user, password);
+        }
+
         return userRepository.save(user);
     }
 
@@ -232,7 +234,7 @@ public class UsersService {
             user.setFname(userPostRequest.getFname());
             user.setLname(userPostRequest.getLname());
             user.setPhone(userPostRequest.getPhone());
-            saveUser(user);
+            saveUser(user, "UPDATE", "");
             return true;
         }else{
             return false;
