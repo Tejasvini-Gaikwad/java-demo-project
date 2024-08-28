@@ -54,6 +54,7 @@ public class UsersController {
         return usersService.deleteUserResponse(id);
     }
 
+    @PreAuthorize("@customSecurityExpressions.isEmployee()")
     @PostMapping("/request-asset")
     public ResponseEntity<RequestResponse> requestAsset(
             @RequestParam Long userId, @RequestParam Long assetId ) {

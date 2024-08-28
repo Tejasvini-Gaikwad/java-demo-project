@@ -2,10 +2,8 @@ package com.example.assetmanagementsystem.services;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.assetmanagementsystem.entities.Users;
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -14,10 +12,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
-
 import javax.crypto.spec.SecretKeySpec;
 import java.security.Key;
-
 import java.time.Duration;
 import java.util.Date;
 import java.util.function.Function;
@@ -55,9 +51,6 @@ public class JwtService {
         DecodedJWT decodedJWT = JWT.decode(token);
         Date expiration = decodedJWT.getExpiresAt();
         return expiration != null && !expiration.before(new Date());
-//        Date loginExpiryTime = DateConversionUtil.conversion(loginAudit);
-//        return extractExpiration(token).equals(loginExpiryTime);
-//        return false;
     }
 
     private Date extractExpiration(String token) {
@@ -98,14 +91,4 @@ public class JwtService {
         String username = extractUsername(token);
         return userDetailsService.loadUserByUsername(username);
     }
-
-//    public Authentication getAuthentication(String token) {
-//        Claims claims = Jwts.parser()
-//                .setSigningKey(getSigningKey())
-//                .parseClaimsJws(token)
-//                .getBody();
-//
-//        String username = claims.getSubject();
-//        return null; // Replace with actual implementation
-//    }
 }

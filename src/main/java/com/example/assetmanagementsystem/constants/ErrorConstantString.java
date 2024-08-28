@@ -64,21 +64,11 @@ public class ErrorConstantString {
             return MessageFormat.format(ErrorConstants.NOT_VALID_ERROR_MESSAGE, code);
     }
 
-//    public static String notValidErrorMessageRecordCount(String language, String count) {
-//            return MessageFormat.format(ErrorConstants.NOT_VALID_FILE_RECORD_COUNT_MESSAGE, count);
-//    }
-//
-//    public static String notValidErrorMessageFileSize(String language, String fileSize) {
-//            return MessageFormat.format(ErrorConstants.NOT_VALID_FILE_SIZE_MESSAGE, fileSize);
-//    }
-
 //    public static String notValidErrorMessageFileType(String language, String fileTypes) {
 //            return MessageFormat.format(ErrorConstants.NOT_VALID_FILE_TYPE_MESSAGE, fileTypes);
 //    }
 //
-//    public static String notValidErrorMessageUserRole(String language) {
-//            return ErrorConstants.NOT_VALID_USER_ROLE_MESSAGE;
-//    }
+
 
     public static String notValidErrorMessagePassword(String language) {
             return ErrorConstants.NOT_VALID_ERROR_MESSAGE_PASSWORD;
@@ -114,6 +104,7 @@ public class ErrorConstantString {
         Map<String, String> englishMessages = new HashMap<>();
         englishMessages.put(AppConstants.NAME, "Name: {0} already exists");
         englishMessages.put(AppConstants.USERNAME, "User Name: {0} already exists");
+        englishMessages.put(AppConstants.EMAIL, "Email: {0} already exists");
         errorMessage.put(AppConstants.ENGLISH, englishMessages);
         Map<String, String> messages = errorMessage.getOrDefault(AppConstants.ENGLISH.toLowerCase(), errorMessage.get(AppConstants.ENGLISH));
         return MessageFormat.format(messages.getOrDefault(text, AppConstants.UNKNOWN_ERROR), var2);
@@ -131,7 +122,7 @@ public class ErrorConstantString {
             return ErrorConstants.UNAUTHORIZED_USER;
     }
 
-    public static String notValidErrorMessageUsername(String language) {
+    public static String notValidErrorMessageUsername() {
             return ErrorConstants.NOT_VALID_ERROR_MESSAGE_USERNAME;
     }
 
@@ -139,23 +130,15 @@ public class ErrorConstantString {
 //            return ErrorConstants.CURRENT_PASSWORD_INCORRECT;
 //    }
 
-    public static String notValidErrorMessageFirstname(String language) {
+    public static String notValidErrorMessageFirstname() {
             return ErrorConstants.NOT_VALID_ERROR_MESSAGE_FIRSTNAME;
     }
 
-    public static String notValidErrorMessageLastname(String language) {
+    public static String notValidErrorMessageLastname() {
             return ErrorConstants.NOT_VALID_ERROR_MESSAGE_LASTNAME;
     }
 
     public static String notValidErrorMessagePhone(String language) {
             return ErrorConstants.NOT_VALID_ERROR_MESSAGE_PHONE;
     }
-
-//    public static String notValidErrorMessageUserDorakuCode(String language) {
-//            return ErrorConstants.NOT_VALID_ERROR_MESSAGE_USER_DORAKU_CODE;
-//    }
-//
-//    public static String updateUserStatusErrorMessage(String language) {
-//            return ErrorConstants.INACTIVE_USER_ERROR_MESSAGE;
-//    }
 }

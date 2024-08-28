@@ -15,4 +15,10 @@ public class AssetManagementConfig {
     private String regExPhone;
     @Value("${regex.email.regexp}")
     private String regExEmail;
+    @Value("${regex.user-name.regexp}")
+    private String regExUserName;
+    @Value("${regex.first-name.regexp}")
+    private String regExFirstName;
+    @Value("${regex.last-name.regexp}")
+    private String regExLastName;
 }
