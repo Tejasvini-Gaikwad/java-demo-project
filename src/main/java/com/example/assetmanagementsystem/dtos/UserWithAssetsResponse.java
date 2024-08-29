@@ -22,9 +22,10 @@ public class UserWithAssetsResponse {
     private String phone;
     private String fname;
     private String lname;
-    private Integer created_by;
+    private String status;
+    private String created_by;
     private Date created_at;
-    private Integer updated_by;
+    private String updated_by;
     private Date updated_at;
     private List<UserAssetsDTO> userAssets;
 }

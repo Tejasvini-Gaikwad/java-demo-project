@@ -34,6 +34,7 @@ public class Users implements UserDetails {
     private String phone;
     private String fname;
     private String lname;
+    private String status;
     private Long created_by;
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_at", updatable = false, nullable = false)

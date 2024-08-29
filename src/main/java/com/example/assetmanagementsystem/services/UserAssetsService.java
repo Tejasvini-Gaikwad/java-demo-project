@@ -24,6 +24,8 @@ public class UserAssetsService {
     private final UserAssetRepository userAssetsRepository;
     private final UserRepository userRepository;
     private final AssetRepository assetRepository;
+    @Autowired
+    private UsersService usersService;
 
     @Autowired
     public UserAssetsService(UserRepository userRepository, AssetRepository assetRepository, UserAssetRepository userAssetsRepository) {
@@ -149,6 +151,7 @@ public class UserAssetsService {
     }
 
     private UserWithAssetsResponse convertToUserWithAssetsResponse(Users user) {
+        Users userData = usersService.findByUserId(user.getCreated_by());
         List<UserAssetsDTO> userAssetsDTOs = user.getUserAssets().stream()
                 .map(userAsset -> new UserAssetsDTO(
                         userAsset.getId(),
@@ -167,16 +170,16 @@ public class UserAssetsService {
                 user.getPhone(),
                 user.getFname(),
                 user.getLname(),
-                Math.toIntExact(user.getCreated_by()),
+                user.getStatus(),
+                userData.getUsername(),
                 user.getCreated_at(),
-                Math.toIntExact(user.getUpdated_by()),
+                userData.getUsername(),
                 user.getUpdated_at(),
                 userAssetsDTOs
         );
     }
 
     public ResponseEntity<List<UserAssetsResponseDTO>> getAllocatedAssets(Long userId) {
-
         try {
             List<UserAssets> userAssetsList = userAssetsRepository.findAllByUserId(userId);
 
@@ -194,13 +197,14 @@ public class UserAssetsService {
 
                 // Create an AssetsDto object (or similar) to store asset information
                 AssetsDto assetDto = new AssetsDto();
+                Users userData = usersService.findByUserId(userAsset.getAsset().getCreated_by());
                 assetDto.setId(userAsset.getAsset().getId());
                 assetDto.setName(userAsset.getAsset().getName());
                 assetDto.setDescription(userAsset.getAsset().getDescription());
                 assetDto.setCreated_at(userAsset.getAsset().getCreated_at());
                 assetDto.setUpdated_at(userAsset.getAsset().getUpdated_at());
-                assetDto.setCreated_by(Math.toIntExact(userAsset.getAsset().getCreated_by()));
-                assetDto.setUpdated_by(Math.toIntExact(userAsset.getAsset().getUpdated_by()));
+                assetDto.setCreated_by(userData.getUsername());
+                assetDto.setUpdated_by(userData.getUsername());
 
                 // Add the assetDto to the list of assets in responseDTO
                 responseDTO.getAssets().add(assetDto);

@@ -23,7 +23,6 @@ public class AssetValidator {
     private final AssetRepository assetRepository;
     public void validateAssetRequest(AssetPostRequest asset, String action){
         List<ErrorDto> errors = assetBasicValidation(asset, action);
-//        System.out.println(errors);
         if (!errors.isEmpty()) throw new ValidationException(errors);
     }
 

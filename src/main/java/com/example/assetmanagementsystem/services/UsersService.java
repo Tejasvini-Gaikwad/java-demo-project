@@ -28,14 +28,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BindingResult;
 
 import java.text.MessageFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -53,16 +54,6 @@ public class UsersService {
     private String applicationEmailAddress;
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
-
-//    public ResponseEntity<List<UserWithAssetsResponse>> getAllUsersResponse(String keyword, int page, int size) {
-//        try {
-//            List<Users> users = getAllUsers(keyword, page, size);
-//            List<UserWithAssetsResponse> userDTOs = users.stream().map(this::convertToUserWithAssetsResponse).collect(Collectors.toList());
-//            return new ResponseEntity<>(userDTOs, HttpStatus.OK);
-//        } catch (Exception e) {
-//            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
 
     public ResponseEntity<List<UserWithAssetsResponse>> getAllUsersResponse(String keyword, int page, int size) {
         try {
@@ -87,6 +78,7 @@ public class UsersService {
                 ))
                 .collect(Collectors.toList());
 
+        Users userData = findByUserId(user.getCreated_by());
         return new UserWithAssetsResponse(
                 user.getId(),
                 user.getUsername(),
@@ -96,21 +88,14 @@ public class UsersService {
                 user.getPhone(),
                 user.getFname(),
                 user.getLname(),
-                Math.toIntExact(user.getCreated_by()),
+                user.getStatus(),
+                userData.getUsername(),
                 user.getCreated_at(),
-                Math.toIntExact(user.getUpdated_by()),
+                userData.getUsername(),
                 user.getUpdated_at(),
                 userAssetsDTOs
         );
     }
-
-//    public List<Users> getAllUsers(String keyword, int page, int size) {
-//        List<Users> users = userRepository.findAllWithUserAssets();
-//        for (Users user : users) {
-//            Hibernate.initialize(user.getUserAssets()); // Ensure the collection is loaded
-//        }
-//        return users;
-//    }
 
     public List<Users> getAllUsers(String keyword, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("id")); // Adjust sorting as needed
@@ -141,6 +126,7 @@ public class UsersService {
         newUser.setFname(user.getFname());
         newUser.setLname(user.getLname());
         newUser.setUserType(user.getUser_type());
+        newUser.setStatus("ACTIVE");
         newUser.setCreated_by(userId);
         newUser.setUpdated_by(userId);
         newUser.setCreated_at(new Date());
@@ -162,7 +148,9 @@ public class UsersService {
 
     public ResponseEntity<RequestResponse> deleteUserResponse(Long id) {
         if (userRepository.existsById(id)) {
-            userRepository.deleteById(id);
+            Users user = findByUserId(id);
+            user.setStatus("INACTIVE");
+//            userRepository.deleteById(id);
             RequestResponse response = new RequestResponse("User deleted successfully", HttpStatus.OK.value());
             return new ResponseEntity<>(response, HttpStatus.OK);
         } else {
@@ -231,13 +219,24 @@ public class UsersService {
     public boolean updateProfile(Long id, UserPostRequest userPostRequest) {
         Users user = userRepository.findById(id).orElse(null);
         if (user != null) {
-            user.setFname(userPostRequest.getFname());
-            user.setLname(userPostRequest.getLname());
-            user.setPhone(userPostRequest.getPhone());
+            if (userPostRequest.getFname() != null && !userPostRequest.getFname().isEmpty()) user.setFname(userPostRequest.getFname());
+            if (userPostRequest.getLname() != null && !userPostRequest.getLname().isEmpty()) user.setLname(userPostRequest.getLname());
+            if (userPostRequest.getPhone() != null && !userPostRequest.getPhone().isEmpty()) user.setPhone(userPostRequest.getPhone());
             saveUser(user, "UPDATE", "");
             return true;
         }else{
             return false;
         }
+    }
+
+    public Users findByUserId(Long userId) {
+        Optional<Users> optionalUser = userRepository.findById(userId);
+        Users user;
+        if (optionalUser.isPresent()) {
+            user = optionalUser.get();
+        } else {
+            throw new UsernameNotFoundException("User not found with ID: " + userId);
+        }
+        return user;
     }
 }

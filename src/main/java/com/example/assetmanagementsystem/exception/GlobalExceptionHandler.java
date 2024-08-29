@@ -25,7 +25,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     private ResponseEntity<Object> generateResponseWithErrors(List<ErrorDto> errors) {
         return ResponseEntity.ok().body(
                 ResponseDto.builder()
-                        .status(1)
+                        .status(0)
                         .errors(errors)
                         .build());
     }

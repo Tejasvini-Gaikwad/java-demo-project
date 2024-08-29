@@ -11,8 +11,8 @@ public class AssetsDto {
     private Long id;
     private String name;
     private String description;
-    private Integer created_by;
+    private String created_by;
     private Date created_at;
-    private Integer updated_by;
+    private String updated_by;
     private Date updated_at;
 }

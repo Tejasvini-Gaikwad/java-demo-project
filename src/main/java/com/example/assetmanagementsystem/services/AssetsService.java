@@ -31,6 +31,7 @@ public class AssetsService {
     private final AssetValidator assetValidator;
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
+    private final UsersService usersService;
 
     public ResponseEntity<Iterable<AssetsDto>> fetchAssets(String keyword, int page, int size) {
         try {
@@ -51,12 +52,13 @@ public class AssetsService {
         }
         return assets.stream().map(asset -> {
             AssetsDto dto = new AssetsDto();
+            Users userData = usersService.findByUserId(asset.getCreated_by());
             dto.setId(asset.getId());
             dto.setName(asset.getName());
             dto.setDescription(asset.getDescription());
-            dto.setCreated_by(Math.toIntExact(asset.getCreated_by()));
+            dto.setCreated_by(userData.getUsername());
             dto.setCreated_at(asset.getCreated_at());
-            dto.setUpdated_by(Math.toIntExact(asset.getUpdated_by()));
+            dto.setUpdated_by(userData.getUsername());
             dto.setUpdated_at(asset.getUpdated_at());
             return dto;
         }).collect(Collectors.toList());
