@@ -205,12 +205,8 @@ public class UserAssetsService {
                 assetDto.setUpdated_at(userAsset.getAsset().getUpdated_at());
                 assetDto.setCreated_by(userData.getUsername());
                 assetDto.setUpdated_by(userData.getUsername());
-
-                // Add the assetDto to the list of assets in responseDTO
                 responseDTO.getAssets().add(assetDto);
             }
-
-            // Convert the map values to a list of UserAssetsResponseDTO
             List<UserAssetsResponseDTO> userAssetsResponseDTOList = new ArrayList<>(userAssetsMap.values());
 
             return new ResponseEntity<>(userAssetsResponseDTOList, HttpStatus.OK);

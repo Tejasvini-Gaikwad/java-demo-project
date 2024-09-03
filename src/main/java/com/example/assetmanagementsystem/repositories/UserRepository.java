@@ -15,14 +15,9 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<Users, Long> {
     @Query("SELECT u FROM Users u LEFT JOIN FETCH u.userAssets WHERE u.username LIKE %:keyword% OR u.fname LIKE %:keyword% OR u.lname LIKE %:keyword%")
-    Page<Users> findAllWithUserAssets(Pageable pageable, @Param("keyword") String keyword);
-//    @Query("SELECT u FROM Users u LEFT JOIN FETCH u.userAssets")
-//    List<Users> findAllWithUserAssets();
+    Page<Users> findAllWithUserAssets(@Param("keyword") String keyword, Pageable pageable);
     boolean existsByUsername(String username);
     Optional<Users> findByUsername(String username);
     Optional<Users> findByEmail(String email);
     boolean existsByEmail(String email);
-
-//    Page<Users> findByUsernameContainingIgnoreCaseOrFnameContainingIgnoreCaseOrLnameContainingIgnoreCase(String username, String fname, Pageable pageable);
-//    Page<Users> findAllWithUserAssets(Pageable pageable);
 }

@@ -3,7 +3,6 @@ package com.example.assetmanagementsystem.services;
 import com.example.assetmanagementsystem.dtos.UserAssetsDTO;
 import com.example.assetmanagementsystem.dtos.UserPostRequest;
 import com.example.assetmanagementsystem.dtos.UserWithAssetsResponse;
-import com.example.assetmanagementsystem.entities.UserAssets;
 import com.example.assetmanagementsystem.entities.Users;
 import com.example.assetmanagementsystem.repositories.UserRepository;
 import com.example.assetmanagementsystem.response.RequestResponse;
@@ -13,11 +12,8 @@ import jakarta.mail.Message;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeUtility;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.Hibernate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -31,7 +27,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.text.MessageFormat;
 import java.util.Date;
@@ -40,14 +35,12 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional
 @Slf4j
 @RequiredArgsConstructor
 public class UsersService {
     private final UserRepository userRepository;
     private final JavaMailSender javaMailSender;
     private final UserValidator userValidator;
-    @Autowired
     private final PasswordEncoder passwordEncoder;
 
     @Value("${from.email.address}")
@@ -98,26 +91,15 @@ public class UsersService {
     }
 
     public List<Users> getAllUsers(String keyword, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("id")); // Adjust sorting as needed
-        Page<Users> userPage = userRepository.findAllWithUserAssets(pageable, keyword);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Users> userPage = userRepository.findAllWithUserAssets(keyword, pageable);
         List<Users> users = userPage.getContent();
-
-        for (Users user : users) {
-            Hibernate.initialize(user.getUserAssets()); // Ensure the collection is loaded
-        }
         return users;
     }
 
 
     public ResponseEntity<RequestResponse> processAndSaveUser(UserPostRequest user, String token) {
-        token = token.substring(7);
-        UserDetails userDetails = jwtService.getUserDetailsFromToken(token, userDetailsService);
-        Long userId = null;
-        if (userDetails instanceof Users) {
-            userId = ((Users) userDetails).getId();
-        } else {
-            System.out.println("The userDetails object is not an instance of Users.");
-        }
+        Long userId = findUserByToken(token);
         userValidator.validateUserRequest(user, "CREATE");
         Users newUser = new Users();
         newUser.setUsername(user.getUsername());
@@ -138,6 +120,18 @@ public class UsersService {
     }
 
 
+    public Long findUserByToken(String token) {
+        token = token.substring(7);
+        UserDetails userDetails = jwtService.getUserDetailsFromToken(token, userDetailsService);
+        Long userId = null;
+        if (userDetails instanceof Users) {
+            userId = ((Users) userDetails).getId();
+        } else {
+            System.out.println("The userDetails object is not an instance of Users.");
+        }
+        return userId;
+    }
+
     public Users saveUser(Users user, String method, String password) {
         if(method.equals("CREATE")){
             sendUserOnboardingEmail(user, password);
@@ -150,7 +144,6 @@ public class UsersService {
         if (userRepository.existsById(id)) {
             Users user = findByUserId(id);
             user.setStatus("INACTIVE");
-//            userRepository.deleteById(id);
             RequestResponse response = new RequestResponse("User deleted successfully", HttpStatus.OK.value());
             return new ResponseEntity<>(response, HttpStatus.OK);
         } else {

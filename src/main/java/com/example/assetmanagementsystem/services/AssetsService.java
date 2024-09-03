@@ -65,14 +65,7 @@ public class AssetsService {
     }
 
     public ResponseEntity<RequestResponse> processAssetSaving(AssetPostRequest asset, String token) {
-        token = token.substring(7);
-        UserDetails userDetails = jwtService.getUserDetailsFromToken(token, userDetailsService);
-        Long userId = null;
-        if (userDetails instanceof Users) {
-            userId = ((Users) userDetails).getId();
-        } else {
-            System.out.println("The userDetails object is not an instance of Users.");
-        }
+        Long userId = usersService.findUserByToken(token);
         assetValidator.validateAssetRequest(asset, "CREATE");
         Assets new_asset = new Assets();
         new_asset.setName(asset.getName());

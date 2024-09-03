@@ -29,15 +29,6 @@ public class AuthenticationService {
         this.passwordEncoder = passwordEncoder;
     }
 
-//    public Users signup(RegisterUserDto input) {
-//        Users user = new Users()
-//                .setFname(input.getFname())
-//                .setEmail(input.getEmail())
-//                .setPassword(passwordEncoder.encode(input.getPassword()));
-//
-//        return userRepository.save(user);
-//    }
-
     public Users authenticate(LoginUserDto input) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(

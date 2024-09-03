@@ -1,7 +1,6 @@
 package com.example.assetmanagementsystem.controller;
 
 import com.example.assetmanagementsystem.dtos.AssetsDto;
-import com.example.assetmanagementsystem.dtos.UserAssetsResponseDTO;
 import com.example.assetmanagementsystem.dtos.AssetPostRequest;
 import com.example.assetmanagementsystem.entities.Assets;
 import com.example.assetmanagementsystem.response.RequestResponse;

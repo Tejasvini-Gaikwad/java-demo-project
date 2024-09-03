@@ -17,7 +17,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json");
         PrintWriter writer = response.getWriter();
-        writer.write("{\"message\": \"You are not authorized to access this request\"}");
+        writer.write("{\"message\": \"Invalid username or password\"}");
         writer.flush();
     }
 }

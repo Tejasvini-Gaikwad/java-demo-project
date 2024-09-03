@@ -9,6 +9,4 @@ public class LoginResponse {
     @Getter
     private String token;
     private long expiresIn;
-    private long expirationTime;
-
 }

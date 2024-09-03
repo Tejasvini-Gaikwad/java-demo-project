@@ -1,20 +1,12 @@
 package com.example.assetmanagementsystem.controller;
-
-import com.example.assetmanagementsystem.dtos.AssetResponseDTO;
-import com.example.assetmanagementsystem.dtos.AssignAssetRequest;
-import com.example.assetmanagementsystem.dtos.UserAssetsResponseDTO;
-import com.example.assetmanagementsystem.dtos.UserPostRequest;
-import com.example.assetmanagementsystem.dtos.UserWithAssetsResponse;
-import com.example.assetmanagementsystem.entities.Users;
+import com.example.assetmanagementsystem.dtos.*;
 import com.example.assetmanagementsystem.repositories.UserRepository;
 import com.example.assetmanagementsystem.response.RequestResponse;
-import com.example.assetmanagementsystem.entities.UserAssets;
 import com.example.assetmanagementsystem.repositories.UserAssetRepository;
 import com.example.assetmanagementsystem.security.CustomSecurityExpressions;
 import com.example.assetmanagementsystem.services.UserAssetsService;
 import com.example.assetmanagementsystem.services.UsersService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -57,8 +49,8 @@ public class UsersController {
     @PreAuthorize("@customSecurityExpressions.isEmployee()")
     @PostMapping("/request-asset")
     public ResponseEntity<RequestResponse> requestAsset(
-            @RequestParam Long userId, @RequestParam Long assetId ) {
-        return userAssetsService.handleAssetRequest(userId, assetId, "PENDING");
+            @RequestBody RequestAssetDto requestAssetDto) {
+        return userAssetsService.handleAssetRequest(requestAssetDto.getUserId(), requestAssetDto.getAssetId(), "PENDING");
     }
 
     @PreAuthorize("@customSecurityExpressions.isAdmin()")
@@ -74,7 +66,7 @@ public class UsersController {
     }
 
     @PreAuthorize("@customSecurityExpressions.isAdmin()")
-    @PostMapping("/assign-asset/{userId}")
+    @PostMapping("/assign-asset/users/{userId}")
     public ResponseEntity<RequestResponse> assignAsset(@PathVariable Long userId, @RequestBody AssignAssetRequest requestData) {
         return userAssetsService.assignAssetToEmployee(userId, requestData);
     }

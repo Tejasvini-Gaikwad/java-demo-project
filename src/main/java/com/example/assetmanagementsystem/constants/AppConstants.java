@@ -5,7 +5,6 @@ import java.util.List;
 public final class AppConstants {
     public static final String DESCRIPTION = "description";
     public static final String ENGLISH = "english";
-    public static final String USER = "User";
     public static final String NAME = "Name";
     public static final String EMAIL = "email";
     public static final String PHONE = "PhoneNumber";

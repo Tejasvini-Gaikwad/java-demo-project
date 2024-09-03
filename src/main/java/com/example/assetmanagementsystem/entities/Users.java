@@ -2,18 +2,11 @@ package com.example.assetmanagementsystem.entities;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -48,12 +41,7 @@ public class Users implements UserDetails {
     private List<UserAssets> userAssets;
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if ("ADMIN".equals(userType)) {
-            return Collections.singletonList(new SimpleGrantedAuthority("ROLE_ADMIN"));
-        } else if ("EMPLOYEE".equals(userType)) {
-            return Collections.singletonList(new SimpleGrantedAuthority("ROLE_EMPLOYEE"));
-        }
-        return Collections.emptyList(); // or return a list of roles/authorities
+        return List.of();
     }
 
 }
